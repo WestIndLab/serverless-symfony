@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="card-title mb-0">Tableau de bord</h2>
+                        <a href="{{ path('app_logout') }}" class="btn btn-outline-danger">Déconnexion</a>
+                    </div>
+
+                    <div class="alert alert-success">
+                        Vous êtes connecté en tant que <strong>{{ user.username }}</strong>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Informations de session</h5>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <strong>Nom d'utilisateur :</strong> {{ user.username }}
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Rôles :</strong> {{ user.roles|join(', ') }}
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Connecté depuis :</strong> {{ user.loginTime|date('d/m/Y H:i:s') }}
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>ID de session :</strong> {{ app.session.id }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">{{ title }}</h1>
+                    
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+
+                    <p class="text-muted">
+                        Timestamp: {{ timestamp|date('Y-m-d H:i:s') }}
+                    </p>
+
+                    <h3 class="mt-4">Fonctionnalités:</h3>
+                    <ul class="list-group">
+                        {% for feature in features %}
+                            <li class="list-group-item">{{ feature }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+# Symfony
+/app/symfony/var/
+/app/symfony/.env.local
+/app/symfony/.env.local.php
+/app/symfony/.env.*.local
+/app/symfony/config/secrets/prod/prod.decrypt.private.php
+/app/symfony/public/bundles/
+/app/symfony/var/
+/app/symfony/vendor/
+
+# Composer
+/app/symfony/.composer/
+.composer/
+composer.phar
+
+# Docker
+/docker/logs/*
+!/docker/logs/.gitkeep
+
+# Serverless
+.serverless/
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# OS
+.DS_Store
+Thumbs.db

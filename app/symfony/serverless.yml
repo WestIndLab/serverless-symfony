@@ -1,0 +1,74 @@
+org: hetic
+app: serverless-symfony
+service: serverless-symfony
+
+provider:
+  name: aws
+  region: eu-west-3
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+          Resource: !GetAtt SessionsTable.Arn
+
+plugins:
+  - ./vendor/bref/bref
+  - serverless-lift
+
+package:
+  patterns:
+    # Inclure uniquement les fichiers nécessaires
+    - "**"
+    - "!var/**"
+    - "var/cache/prod/**"
+    - "!tests/**"
+    - "public/assets/**"
+    - "public/bundles/**"
+    - "assets/**"
+
+constructs:
+  assets:
+    type: server-side-website
+    # path: public
+    # expire: 1 day
+    assets:
+      "/assets/*": public/assets
+      # "/bundles/*": public/bundles
+
+resources:
+  Resources:
+    SessionsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${sls:stage}-sessions
+        AttributeDefinitions:
+          - AttributeName: session_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: session_id
+            KeyType: HASH
+        TimeToLiveSpecification:
+          AttributeName: expires
+          Enabled: true
+        BillingMode: PAY_PER_REQUEST
+
+functions:
+  web:
+    handler: public/index.php
+    runtime: php-82-fpm
+    architecture: arm64
+    description: "Symfony application"
+    timeout: 28 # in seconds
+    events:
+      - httpApi: "*"
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: "0"
+      SYMFONY_DEBUG_TOOLBAR: "0"
+      APP_SECRET: "ThisIsASecretChangeMeInProduction123!"
+      ASSET_URL: ${construct:assets.url}
+      DYNAMODB_SESSIONS_TABLE: ${self:service}-${sls:stage}-sessions

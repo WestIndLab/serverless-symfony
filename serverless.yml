@@ -1,0 +1,41 @@
+service: serverless-symfony
+
+provider:
+  name: aws
+  region: eu-west-3
+
+plugins:
+  - ./app/symfony/vendor/bref/bref
+  - serverless-lift
+
+package:
+  patterns:
+    # Exclure tout par défaut
+    - "!**"
+    # Inclure uniquement les fichiers nécessaires de app/symfony
+    - "app/symfony/**"
+
+functions:
+  web:
+    handler: app/symfony/public/lambda.php
+    runtime: php-82-fpm
+    architecture: arm64
+    description: "Symfony application"
+    timeout: 28 # in seconds
+    # layers:
+    #   - ${bref-extra:redis-php-83}
+    events:
+      - httpApi: "*"
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: "0"
+      APP_SECRET: "ThisIsASecretChangeMeInProduction123!"
+
+  console:
+    handler: app/symfony/bin/console
+    runtime: php-82-console
+    description: "Symfony Console"
+    timeout: 120 # in seconds
+    environment:
+      APP_ENV: prod
+      APP_SECRET: "ThisIsASecretChangeMeInProduction123!"

@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./app/symfony/public:/var/www/public
+      - ./docker/logs/nginx:/var/log/nginx
+    depends_on:
+      - php
+
+  php:
+    build:
+      context: ./docker/php
+    volumes:
+      - ./app/symfony:/var/www
+      - ./docker/logs/php:/var/log/php
+    environment:
+      - COMPOSER_HOME=/tmp/.composer
+      - HISTFILE=/tmp/.bash_history
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: symfony
+      MYSQL_USER: symfony
+      MYSQL_PASSWORD: symfony
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/custom.cnf
+      - ./docker/logs/mysql:/var/log/mysql
+
+volumes:
+  mysql_data:
